@@ -6,6 +6,7 @@
   <link href="knjiznice/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {padding-top: 70px;}
+    .well {background-color: white;}
   </style>
   <script src="knjiznice/js/jquery-2.2.3.min.js"></script>
   <script src="knjiznice/js/bootstrap.min.js"></script>
@@ -64,6 +65,75 @@
     				<button type="button" class="btn btn-primary btn-xs" onclick="vnesiPodatkeBolnika()">Vnesi podatke</button><span id="vnosSporocilo"></span>
     		  	</div>
     		</div>
+    		
+    		<div class="row">
+			<div class="col-lg-8 col-md-8 col-sm-8">
+                <!-- Pregled indeksa telesne mase -->
+                <div class="panel panel-default">
+        			<div class="panel-heading">
+        				<div class="row">
+        					<div class="col-lg-8 col-md-8 col-sm-8"><b>Pregled indeksa telesne mase</b></div>
+                            <div class="col-lg-4 col-md-4 col-sm-4">
+                                <select class="form-control input-sm" id="pregledDropdown"><option value=""></option></select>
+                            </div>
+        				</div>
+        			</div>
+        			<div class="panel-body">
+        				<span class="label label-default">EHR ID</span><input id="pregledEHR" type="text" class="form-control input-mini" placeholder="668e4b6c-9519-4ac1-b88c-b6a361850517">
+        				<button type="button" class="btn btn-primary btn-xs" onclick="pregled()">Preglej</button><span id="pregledSporocilo"></span>
+                    </div>
+                    <div class="panel-footer" id="pregledRezultati">
+                        <span class="label label-default">Ime in priimek</span><div class="well well-sm"><span id="pregledImeInPriimek">Janez Novak</span></div>
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <span class="label label-primary">Indeks telesne mase</span><div class="well well-sm"><span id="pregledITM">Izberi datum pregleda na desni.</span></div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <span class="label label-default">Datum pregleda</span><select class="form-control input-sm" id="pregledDatum"></select>
+                            </div>
+                        </div>
+                        <span class="label label-default">Povprečje za državo <span id="pregledDrzava">Country</span> leta <span id="pregledLeto">X</span>:</span><div class="well well-sm"><span id="pregledPovp">30</span></div>
+                    </div>
+        		</div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4">
+                <!-- Legenda ITM -->
+                <div class="panel panel-default">
+        			<div class="panel-heading">
+                        <b>Legenda ITM</b>
+        			</div>
+    				<table class="table" id="legendaITM">
+                        <tr data-minmax="16.0">
+                            <th>Kategorija</th><th>ITM</th>
+                        </tr>
+                        <tr data-minmax="0.0|16.0">
+                            <td>Huda nedohranjenost</td><td>&le; 16.0</td>
+                        </tr>
+                        <tr data-minmax="16.0|17.0">
+                            <td>Zmerna nedohranjenost</td><td>16.0 - 17.0</td>
+                        </tr>
+                        <tr data-minmax="17.0|18.5">
+                            <td>Blaga nedohranjenost</td><td>17.0 - 18.5</td>
+                        </tr>
+                        <tr data-minmax="18.5|25.0">
+                            <td>Normalna telesna masa</td><td>18.5 - 25.0</td>
+                        </tr>
+                        <tr data-minmax="25.0|30.0">
+                            <td>Zvečana telesna masa</td><td>25.0 - 30.0</td>
+                        </tr>
+                        <tr data-minmax="30.0|35.0">
+                            <td>Debelost stopnje I</td><td>30.0 - 35.0</td>
+                        </tr>
+                        <tr data-minmax="35.0|40.0">
+                            <td>Debelost stopnje II</td><td>35.0 - 40.0</td>
+                        </tr>
+                        <tr data-minmax="40.0|1000000.0">
+                            <td>Debelost stopnje III</td><td>&ge; 40.0</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
   </div>
   <!-- KONEC: Vsebina aplikacije -->
 

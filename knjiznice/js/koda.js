@@ -269,6 +269,126 @@ function vnesiPodatkeBolnika() {
     }
 }
 
+function pregled() {
+    $("#pregledRezultati").slideUp();
+    $("#pregledITM").html("Izberi datum pregleda na desni.");
+    $("#legendaITM tbody").children().removeClass("info");
+
+    $("#pregledSporocilo").html("");
+
+	sessionId = getSessionId();
+
+	var ehrId = $("#pregledEHR").val();
+
+	if (!ehrId || ehrId.trim().length == 0) {
+		$("#pregledSporocilo").html("<span class='obvestilo label label-warning " +
+          "fade-in'>Prosim vnesite zahtevan podatek!");
+	} else {
+		$.ajax({
+			url: baseUrl + "/demographics/ehr/" + ehrId + "/party",
+			type: 'GET',
+			headers: {"Ehr-Session": sessionId},
+	    	success: function(data) {
+				var party = data.party;
+
+                vrniPodatke(ehrId, function(vrstice) {
+                    if(vrstice == null) {
+                        $("#pregledDatum").html("<option>Napaka pri pridobivanju podatkov!</option>");
+                    } else if(vrstice.length == 0) {
+                        $("#pregledDatum").html("<option>Ni podatkov!</option>");
+                    } else {
+                        $("#pregledDatum").html("<option></option>");
+                        vrstice.forEach(function(vrstica) {
+                            $("#pregledDatum").append("<option value='" + vrstica.itm.toFixed(2) + "'>" + vrstica.datum +
+                              " (" + vrstica.masa + "kg, " + vrstica.visina + "cm)</option>");
+                        });
+                    }
+
+                    var drzava = null;
+                    party.partyAdditionalInfo.forEach(function(info) {
+                        if(info.key == "drzava") {
+                            drzava = info.value;
+                        }
+                    });
+                    if(drzava == null) {
+                        $("#pregledSporocilo").html("<span class='obvestilo label " +
+                          "label-danger fade-in'>Napaka pri pridobivanju države uporabnika.</span>");
+                    } else {
+                        vrniItmDrzav(function(vrstice) {
+                            if(vrstice == null) {
+                                $("#pregledSporocilo").html("<span class='obvestilo label " +
+                                  "label-danger fade-in'>Napaka pri pridobivanju povprečja držav.</span>");
+                            } else {
+                                var povp = null;
+                                var leto = null;
+                                vrstice.forEach(function(vrstica) {
+                                    if(vrstica.drzava == drzava) {
+                                        povp = vrstica.itm;
+                                        leto = vrstica.leto;
+                                    }
+                                });
+                                if(povp == null || leto == null) {
+                                    $("#pregledSporocilo").html("<span class='obvestilo label " +
+                                      "label-danger fade-in'>Napaka: Država uporabnika ni v podatkovni bazi.</span>");
+                                } else {
+                                    $("#pregledImeInPriimek").text(party.firstNames + " " + party.lastNames);
+                                    $("#pregledDrzava").text(drzava);
+                                    $("#pregledLeto").text(leto);
+                                    $("#pregledPovp").text(povp);
+
+                                    $("#pregledRezultati").slideDown();
+                                }
+                            }
+                        });
+                    }
+                })
+			},
+			error: function(err) {
+				$("#pregledSporocilo").html("<span class='obvestilo label " +
+                  "label-danger fade-in'>Napaka '" +
+                  JSON.parse(err.responseText).userMessage + "'!</span>");
+			}
+		});
+	}
+}
+
+function vrniPodatke(ehrId, callback) {
+	sessionId = getSessionId();
+
+    $.ajax({
+        url: baseUrl + "/view/" + ehrId + "/" + "height",
+        type: 'GET',
+        headers: {"Ehr-Session": sessionId},
+        success: function (visine) {
+            $.ajax({
+                url: baseUrl + "/view/" + ehrId + "/" + "weight",
+                type: 'GET',
+                headers: {"Ehr-Session": sessionId},
+                success: function (mase) {
+                    var vrstice = [];
+                    visine.forEach(function(visina) {
+                        mase.forEach(function(masa) {
+                            if(visina.time == masa.time) {
+                                var visinaMetri = visina.height / 100;
+                                var itm = masa.weight / (visinaMetri * visinaMetri);
+                                vrstice.push({datum: visina.time,
+                                  visina: visina.height, masa: masa.weight, itm: itm});
+                            }
+                        });
+                    });
+                    callback(vrstice);
+                },
+                error: function() {
+                    callback(null);
+                }
+            });
+        },
+        error: function() {
+            callback(null);
+        }
+    });
+}
+
 $(document).ready(function() {
     // populiraj drop down list za drzave
     vrniItmDrzav(function(vrstice) {
@@ -277,6 +397,27 @@ $(document).ready(function() {
         } else {
             vrstice.forEach(function(vrstica) {
                 $("#kreirajDrzava").append("<option>" + vrstica.drzava + "</option>");
+            });
+        }
+    });
+    
+    $("#pregledRezultati").hide();
+
+    $("#pregledDatum").change(function() {
+        if($(this).val() == null || $(this).val() == "") {
+            $("#pregledITM").html("Izberi datum pregleda na desni.");
+            $("#legendaITM tbody").children().removeClass("info");
+        } else {
+            var itm = $(this).val();
+            $("#pregledITM").html(itm);
+            $("#legendaITM tbody").children().removeClass("info");
+            $("#legendaITM tbody").children().each(function() {
+                var minmax = $(this).data("minmax").split("|");
+                var min = minmax[0];
+                var max = minmax[1];
+                if(itm > min && itm <= max) {
+                    $(this).addClass("info");
+                }
             });
         }
     });
