@@ -561,5 +561,3 @@ $(document).ready(function() {
         $("#statistikaEHR").val($(this).val());
     });
 });
-
-
