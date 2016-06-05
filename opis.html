@@ -22,7 +22,7 @@
           <span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
         </button>
         <!-- ZAČETEK: Ime vaše aplikacije -->
-        <a class="navbar-brand" href="index.html">{ime vaše aplikacije}</a>
+        <a class="navbar-brand" href="index.html">eITM</a>
         <!-- KONEC: Ime vaše aplikacije -->
       </div>
       <div class="collapse navbar-collapse" id="menujska-vrstica">
@@ -45,7 +45,14 @@
           </div>
           <div class="panel-body">
             <!-- ZAČETEK: Opis ideje, ki jo aplikacija podpira -->
-            <p><strong>TO-DO</strong>: Na tem mestu je potrebno dodati <strong>osnovni opis ideje rešitve</strong> (kakšen je osnovni SCENARIJ UPORABE, KDO je ciljna publika, za kakšen NAMEN se aplikacija uporablja).</p><p class="text-muted">Opis naj ne bo daljši od 200 besed.</p>
+            <p>
+                Aplikacija <b>eITM</b> uporablja podatke o teži in višini pacienta, da izračuna njegov <b>indeks telesne teže</b>
+                in ga prikaže na inovativen način. Pacient lahko vnaša in pregleduje več meritev, svoj ITM pa lahko primerja
+                z nacionalnim povprečjem ali povprečjem katere druge države. Ciljna publika aplikacije je vsak uporabnik, ki
+                bi rad na preprost način beležil svoj ITM, brez potrebe po uporabi formul in iskanju po tabelah. Namen
+                aplikacije je razširjanje poznavanja indeksa telesne mase s poudarkom na spodbujanju in ohranjanju zdravega
+                življenja pacienta.
+            </p>
             <!-- KONEC: Opis ideje, ki jo aplikacija podpira -->
           </div>
         </div>
@@ -55,7 +62,16 @@
           </div>
           <div class="panel-body">
             <!-- ZAČETEK: Uporabljeni zunanji viri podatkov -->
-            <p><strong>TO-DO</strong>: Na tem mestu je navesti zunanji vir podatkov (URL naslov), na kakšen način ste ga uporabili (neposredni API klic, uvožena statična datoteka ipd.) in kaj je bil namen uporabe (kako se vključuje v osnovno idejo aplikacije).</p>
+            <p>
+                Zunanji vir, uporabljen v aplikaciji, je <a href="http://apps.who.int/gho/data/node.main.A904?lang=en">tabela</a>
+                povprečij indeksov telesne mase za vsako državo. Tabela je vzeta s spletne strani World Health Organization in se
+                z neposrednim API klicem posodobi ob vsaki potrebi dostopa do podatkov.
+            </p>
+            <p>
+                Podatki o povprečju držav so uporabljeni pri izpisu indeksa telesne mase uporabnika, da se ta lahko primerja z
+                nacionalnim povprečjem. Uporabljeni so pri statistiki, kjer se lahko uporabnik primerja tudi z povprečji
+                drugih držav. Podatki se v aplikaciji uporabijo še pri kreiranju novega zapisa, da populirajo dropdown seznam držav.
+            </p>
             <!-- KONEC: Uporabljeni zunanji viri podatkov -->
           </div>
         </div>
@@ -65,7 +81,10 @@
           </div>
           <div class="panel-body">
             <!-- ZAČETEK: Master/detail načrtovalski vzorec -->
-            <p><strong>TO-DO</strong>: Na tem mestu morate navesti uporabljen master/detail načrtovalski vzorec in na kakšen način ga nameravate uporabiti.</p>
+            <p>
+                Master/detail vzorec je uporabljen pri prikazu statistike za izbranega uporabnika. Uporabnik ima lahko več
+                meritev telesne višine in mase. Meritve se mu prikažejo v statistiki v obliki kroga poleg njegove države rojstva.
+            </p>
             <!-- KONEC: Master/detail načrtovalski vzorec -->
           </div>
         </div>
@@ -75,7 +94,15 @@
           </div>
           <div class="panel-body">
             <!-- ZAČETEK: Uporabljeni zunanji viri podatkov -->
-            <p><strong>TO-DO</strong>: Na tem mestu je potrebno navesti uporabljeno tehniko vizualizacije podatkov (za pomoč lahko uporabite primer iz <a href="https://github.com/mbostock/d3/wiki/Gallery" target="_blank">D3.js galerije</a>) in zakaj je bila ta tehnika izbrana.</p>
+            <p>
+                Uporabljena tehnika vizualizacije je <a href="http://bl.ocks.org/mbostock/4063269">Bubble Chart</a>, izbral
+                pa sem jo, ker na lep in inovativen način prikaže veliko število podatkov.
+            </p>
+            <p>
+                Tehnika je uporabljena pri prikazu statistike. V statistiki so s krogi prikazana povprečja ITM-jev držav.
+                Ob državi pacienta so prikazane tudi vse pacientove meritve. Več informacij o specifičnem krogu se prikaže,
+                če nad njim podržimo miško.
+            </p>
             <!-- KONEC: Uporabljeni zunanji viri podatkov -->
           </div>
         </div>
