@@ -389,6 +389,120 @@ function vrniPodatke(ehrId, callback) {
     });
 }
 
+function prikaziStatistiko() {
+    $("#statistikaRezultati").slideUp();
+    $("#statistikaGraf").html("");
+
+    $("#statistikaSporocilo").html("");
+
+    var ehrId = $("#statistikaEHR").val();
+
+	if (!ehrId || ehrId.trim().length == 0) {
+		$("#statistikaSporocilo").html("<span class='obvestilo label label-warning " +
+          "fade-in'>Prosim vnesite zahtevan podatek!");
+	} else {
+        vrniItmDrzav(function(vrsticeDrzav) {
+            vrniPodatke(ehrId, function(vrsticeUporabnika) {
+                if(vrsticeDrzav == null) {
+                    $("#statistikaSporocilo").html("<span class='obvestilo label " +
+                      "label-danger fade-in'>Napaka pri pridobivanju podatkov zunanjega vira!</span>");
+                } else if(vrsticeUporabnika == null) {
+                    $("#statistikaSporocilo").html("<span class='obvestilo label " +
+                      "label-danger fade-in'>Napaka pri pridobivanju podatkov iz EHR baze!</span>");
+                } else {
+                    $.ajax({
+            			url: baseUrl + "/demographics/ehr/" + ehrId + "/party",
+            			type: 'GET',
+            			headers: {"Ehr-Session": sessionId},
+            	    	success: function(data) {
+            				var party = data.party;
+                            var drzavaUporabnika = null;
+                            party.partyAdditionalInfo.forEach(function(info) {
+                                if(info.key == "drzava") {
+                                    drzavaUporabnika = info.value;
+                                }
+                            });
+                            if(drzavaUporabnika == null) {
+                                $("#pregledSporocilo").html("<span class='obvestilo label " +
+                                  "label-danger fade-in'>Napaka pri pridobivanju države uporabnika.</span>");
+                            } else {
+                                var disp = [];
+                                vrsticeDrzav.forEach(function(vrsticaD) {
+                                    var itm_corrected = (vrsticaD.itm - 10) * (100000 - 100) / (40 - 10) + 100; //za izris
+                                    var cluster = vrsticaD.drzava.substring(0, 1);
+                                    if(vrsticaD.drzava == drzavaUporabnika) {
+                                        cluster = "__user-drzava";
+                                        vrsticeUporabnika.forEach(function(vrsticaU) {
+                                            var itm_corrected_u = (vrsticaU.itm - 10) * (100000 - 100) / (40 - 10) + 100; //za izris
+                                            if(itm_corrected_u > 0) { // itm je vecji od 10, ce ni ga ne prikazi
+                                                disp.push({className: party.firstNames + " " + party.lastNames,
+                                                  packageName: "__user",
+                                                  value: itm_corrected_u, itm: vrsticaU.itm.toFixed(2), datum: vrsticaU.datum});
+                                            }
+                                        });
+                                    }
+                                    disp.push({className: vrsticaD.drzava, packageName: cluster,
+                                      value: itm_corrected, itm: vrsticaD.itm, datum: vrsticaD.leto});
+                                });
+
+                                var diameter = 960,
+                                    format = d3.format(",d"),
+                                    color = d3.scale.category20c();
+
+                                var bubble = d3.layout.pack()
+                                    .sort(null)
+                                    .size([diameter, diameter])
+                                    .padding(1.5);
+
+                                var svg = d3.select("#statistikaGraf").append("svg")
+                                    .attr("width", diameter)
+                                    .attr("height", diameter)
+                                    .attr("class", "bubble");
+
+                                root = {children: disp};
+
+                                var node = svg.selectAll(".node")
+                                    .data(bubble.nodes(root)
+                                    .filter(function(d) { return !d.children; }))
+                                    .enter().append("g")
+                                    .attr("class", "node")
+                                    .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+                                node.append("title")
+                                    .text(function(d) { return d.className + " (" + d.datum + "): " + d.itm; });
+
+                                node.append("circle")
+                                    .attr("r", function(d) { return d.r; })
+                                    .style("fill", function(d) {
+                                        if(d.packageName.startsWith("__user")) {
+                                            return "BFC722";
+                                        }
+                                        return color(d.packageName);
+                                    });
+
+                                node.append("text")
+                                    .attr("dy", ".3em")
+                                    .style("text-anchor", "middle")
+                                    .text(function(d) { return d.className.substring(0, d.r / 3); });
+
+                                d3.select(self.frameElement).style("height", diameter + "px");
+
+                                $("#statistikaRezultati").slideDown();
+                            }
+                        },
+
+                        error: function(err) {
+            				$("#statistikaSporocilo").html("<span class='obvestilo label " +
+                              "label-danger fade-in'>Napaka '" +
+                              JSON.parse(err.responseText).userMessage + "'!</span>");
+            			}
+            		});
+                }
+            });
+        });
+    }
+}
+
 $(document).ready(function() {
     // populiraj drop down list za drzave
     vrniItmDrzav(function(vrstice) {
@@ -421,6 +535,8 @@ $(document).ready(function() {
             });
         }
     });
+    
+    $("#statistikaRezultati").hide();
 });
 
 

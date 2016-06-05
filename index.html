@@ -7,8 +7,10 @@
   <style>
     body {padding-top: 70px;}
     .well {background-color: white;}
+    #zadnjiDiv {margin-bottom: 500px;}
   </style>
   <script src="knjiznice/js/jquery-2.2.3.min.js"></script>
+  <script src="knjiznice/js/d3.v3.min.js"></script>
   <script src="knjiznice/js/bootstrap.min.js"></script>
   <script src="knjiznice/js/koda.js"></script>
 </head>
@@ -132,6 +134,25 @@
                         </tr>
                     </table>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Statistika -->
+        <div class="panel panel-default" id="zadnjiDiv">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-lg-8 col-md-8 col-sm-8"><b>Statistika</b></div>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                        <select class="form-control input-sm" id="statistikaDropdown"><option value=""></option></select>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <span class="label label-default">EHR ID</span><input id="statistikaEHR" type="text" class="form-control input-mini" placeholder="668e4b6c-9519-4ac1-b88c-b6a361850517">
+                <button type="button" class="btn btn-primary btn-xs" onclick="prikaziStatistiko()">Prikaži statistiko</button><span id="statistikaSporocilo"></span>
+            </div>
+            <div class="panel-footer" id="statistikaRezultati">
+                <div class="center-block" id="statistikaGraf"></div>
             </div>
         </div>
   </div>
