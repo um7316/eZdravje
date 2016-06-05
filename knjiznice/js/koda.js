@@ -96,9 +96,9 @@ function ustvariTestnePodatke() {
                               "label label-success fade-in'>Uspešno kreiran EHR pacienta 3: '" +
                               ehrId3 + "'.</span><br />");
                             podatki.push({ehr: ehrId3, vsebina: "Pacient 3"});
-                            /*populirajEHRje(podatki);
+                            populirajEHRje(podatki);
                             $("#generirajSporocilo").append("<span class='obvestilo label " +
-                              "label-warning fade-in'>EHRId-ji so dodani v dropdown sezname!</span>");*/
+                              "label-warning fade-in'>EHRId-ji so dodani v dropdown sezname!</span>");
                         }
                     });
                 }
@@ -503,6 +503,16 @@ function prikaziStatistiko() {
     }
 }
 
+function populirajEHRje(podatki) {
+    $("#pregledDropdown").html("<option value=''></option>");
+    $("#statistikaDropdown").html("<option value=''></option>");
+    podatki.forEach(function(podatek) {
+        var opt = "<option value='" + podatek.ehr + "'>" + podatek.vsebina + "</option>";
+        $("#pregledDropdown").append(opt);
+        $("#statistikaDropdown").append(opt);
+    });
+}
+
 $(document).ready(function() {
     // populiraj drop down list za drzave
     vrniItmDrzav(function(vrstice) {
@@ -537,6 +547,19 @@ $(document).ready(function() {
     });
     
     $("#statistikaRezultati").hide();
+    
+    //populiraj drop down z ehrId-ji
+    var podatki = [{ehr: "668e4b6c-9519-4ac1-b88c-b6a361850517", vsebina: "Zdravko Dren"},
+                   {ehr: "3675100c-be43-482a-95d7-567fbe0af9b2", vsebina: "John Doe"},
+                   {ehr: "18c879da-9db0-4d04-8519-1882101e8016", vsebina: "Chang Chong"}];
+    populirajEHRje(podatki);
+
+    $("#pregledDropdown").change(function() {
+        $("#pregledEHR").val($(this).val());
+    });
+    $("#statistikaDropdown").change(function() {
+        $("#statistikaEHR").val($(this).val());
+    });
 });
 
 
