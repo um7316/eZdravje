@@ -242,6 +242,33 @@ function vrniItmDrzav(callback) {
     });
 }
 
+function vnesiPodatkeBolnika() {
+    $("#vnosSporocilo").html("");
+
+	var ehrId = $("#vnosEHR").val();
+	var datumInUra = $("#vnosDatumInUra").val();
+	var telesnaVisina = $("#vnosTelesnaVisina").val();
+	var telesnaTeza = $("#vnosTelesnaTeza").val();
+
+	if (!ehrId || !datumInUra || !telesnaTeza || !telesnaVisina ||
+      ehrId.trim().length == 0 || datumInUra.trim().length == 0 ||
+      telesnaVisina.trim().length == 0 || telesnaTeza.trim().length == 0) {
+		$("#vnosSporocilo").html("<span class='obvestilo " +
+          "label label-warning fade-in'>Prosim vnesite vse podatke!</span>");
+	} else {
+        vnesiPodatke(ehrId, datumInUra, telesnaVisina, telesnaTeza, function(napaka) {
+            if(napaka) {
+                $("#vnosSporocilo").html(
+                  "<span class='obvestilo label label-danger fade-in'>Napaka: '" +
+                  napaka + "'!</span>");
+            } else {
+                $("#vnosSporocilo").html(
+                  "<span class='obvestilo label label-success fade-in'>Vnos uspešen!</span>");
+            }
+        });
+    }
+}
+
 $(document).ready(function() {
     // populiraj drop down list za drzave
     vrniItmDrzav(function(vrstice) {

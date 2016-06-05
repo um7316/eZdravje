@@ -39,7 +39,7 @@
   <!-- ZAČETEK: Vsebina aplikacije -->
   <div class="container">
     <span id="generirajSporocilo"></span>
-    <!-- Kreiranje novega zapisa -->
+        <!-- Kreiranje novega zapisa -->
         <div class="panel panel-default">
             <div class="panel-heading">
                 <b>Kreiranje novega zapisa</b>
@@ -51,6 +51,19 @@
                 <button type="button" class="btn btn-primary btn-xs" onclick="kreirajNovZapis()">Dodaj osnovne podatke o bolniku</button><span id="kreirajSporocilo"></span>
             </div>
         </div>
+        <!-- Vnos podatkov -->
+        <div class="panel panel-default">
+    			<div class="panel-heading">
+                    <b>Vnos podatkov</b>
+    			</div>
+    			<div class="panel-body">
+    				<span class="label label-default">EHR ID</span><input id="vnosEHR" type="text" class="form-control input-mini" placeholder="668e4b6c-9519-4ac1-b88c-b6a361850517">
+    				<span class="label label-default">Datum in ura</span><input id="vnosDatumInUra" type="text" class="form-control input-mini" placeholder="2014-11-21T11:40Z">
+    				<span class="label label-default">Telesna višina</span><div class="input-group"><input id="vnosTelesnaVisina" type="text" class="form-control input-mini" placeholder="185"><span class="input-group-addon">cm</span></div>
+    				<span class="label label-default">Telesna teža</span><div class="input-group"><input id="vnosTelesnaTeza" type="text" class="form-control input-mini" placeholder="80.00"><span class="input-group-addon">kg</span></div>
+    				<button type="button" class="btn btn-primary btn-xs" onclick="vnesiPodatkeBolnika()">Vnesi podatke</button><span id="vnosSporocilo"></span>
+    		  	</div>
+    		</div>
   </div>
   <!-- KONEC: Vsebina aplikacije -->
 
