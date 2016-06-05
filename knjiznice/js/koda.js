@@ -176,3 +176,83 @@ function vnesiPodatke(ehrId, datumInUra, telesnaVisina, telesnaTeza, callback) {
 	    }
 	});
 }
+
+function kreirajNovZapis() {
+    $("#kreirajSporocilo").html("");
+
+	var ime = $("#kreirajIme").val();
+	var priimek = $("#kreirajPriimek").val();
+	var drzava = $("#kreirajDrzava").val();
+
+	if (!ime || !priimek || !drzava || ime.trim().length == 0 ||
+      priimek.trim().length == 0 || drzava.trim().length == 0) {
+		$("#kreirajSporocilo").html("<span class='obvestilo label " +
+          "label-warning fade-in'>Prosim vnesite zahtevane podatke!</span>");
+	} else {
+        kreirajEHRzaBolnika(ime, priimek, drzava, function(ehrId, napaka) {
+            if(napaka) {
+                $("#kreirajSporocilo").html("<span class='obvestilo label " +
+                  "label-danger fade-in'>Napaka: '" + napaka + "'!</span>");
+            } else {
+                $("#kreirajSporocilo").html("<span class='obvestilo " +
+                  "label label-success fade-in'>Uspešno kreiran EHR '" +
+                  ehrId + "'.</span>");
+            }
+        });
+    }
+}
+
+function vrniItmDrzav(callback) {
+    var response = $.ajax({
+        type: "POST",
+        dataType: "jsonp",
+        url: "http://apps.who.int/gho/athena/data/GHO/NCD_BMI_MEAN.json?profile=simple&filter=AGEGROUP:*;SEX:*;COUNTRY:*",
+        async: false,
+
+        success: function(response) {
+            var vrstice = [];
+            response.fact.forEach(function(data) {
+                if(data.dim.SEX == "Both sexes" && value != "No data") {
+                    var value = data.Value.split(" ")[0];
+                    var vpis = true;
+                    vrstice.forEach(function(vrstica) {
+                        if(vrstica.drzava == data.dim.COUNTRY) {
+                            if(vrstica.leto < data.dim.YEAR) {
+                                vrstica.itm = value;
+                                vrstica.leto = data.dim.YEAR;
+                            }
+                            vpis = false;
+                        }
+                    });
+                    if(vpis)
+                        vrstice.push({drzava: data.dim.COUNTRY, itm: value, leto: data.dim.YEAR});
+                }
+            });
+            // sort
+            vrstice.sort(function(a, b) {
+                return a.drzava < b.drzava ? -1 : 1;
+            });
+            //console.log(vrstice);
+            callback(vrstice);
+        },
+
+        error: function() {
+            callback(null);
+        }
+    });
+}
+
+$(document).ready(function() {
+    // populiraj drop down list za drzave
+    vrniItmDrzav(function(vrstice) {
+        if(vrstice == null) {
+            $("#kreirajDrzava").append("<option>Napaka pri pridobivanju držav. Prosimo, osvežite stran!</option>");
+        } else {
+            vrstice.forEach(function(vrstica) {
+                $("#kreirajDrzava").append("<option>" + vrstica.drzava + "</option>");
+            });
+        }
+    });
+});
+
+
